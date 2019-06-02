@@ -1,0 +1,65 @@
+KONEKCIJA
+
+konek = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|\B5FudbKlubovi.accdb");
+
+
+CITANJE
+
+
+using (SqlConnection connection = new SqlConnection(connectionString))
+using (SqlCommand command = new SqlCommand("select * from Requests where Complete = 0", connection))
+{
+    connection.Open();  
+    using (SqlDataReader reader = command.ExecuteReader())
+    {
+        while (reader.Read())
+        {
+            Console.WriteLine(reader["Username"].ToString());
+            Console.WriteLine(reader["Item"].ToString());
+            Console.WriteLine(reader["Amount"].ToString());
+            Console.WriteLine(reader["Complete"].ToString());
+        }
+
+
+PROVERA
+
+
+SqlCommand provera = new SqlCommand("SELECT COUNT(*) FROM [Knjiga] WHERE ([KnjigaId] = @KnjigaID)" , conn);
+provera.Parameters.AddWithValue("@user", txtBox1.Text);
+int postoji = (int)provera.ExecuteScalar();
+
+if(postoji > 0)
+{
+   //Username exist
+}
+else
+{
+   //Username doesn't exist.
+}
+
+
+PRIKAZ
+
+
+ OleDbCommand prikaz = new OleDbCommand("Select * from Radno_Mesto", konek);
+                    adapter.SelectCommand = prikaz;
+                    adapter.Fill(tabelaPrikaz);
+                    int vrednost = Convert.ToInt32(comboBox1.Text);
+                    textBox1.Text = tabelaPrikaz.Rows[vrednost]["Naziv"].ToString();
+                    textBox2.Text = tabelaPrikaz.Rows[vrednost]["Opis"].ToString();
+                    textBox3.Text = tabelaPrikaz.Rows[vrednost]["PocetnaPlata"].ToString();
+                    textBox4.Text = tabelaPrikaz.Rows[vrednost]["NajvisaPlata"].ToString();
+
+UNOS
+
+
+ konek.Open();
+                OleDbCommand unos = new OleDbCommand("insert into Knjiga(KnjigaID,UDK,ISBN,Naziv) values (@KnjigaID,@UDK,@ISBN,@Naziv)", konek);
+                unos.Parameters.AddWithValue("@KnjigaID", textBox1.Text);
+                unos.Parameters.AddWithValue("@UDK", textBox2.Text);
+                unos.Parameters.AddWithValue("@ISBN", textBox3.Text);
+                unos.Parameters.AddWithValue("@Naziv", textBox4.Text);
+                unos.ExecuteNonQuery();
+                MessageBox.Show("upisano");
+                textBox1.Text = "";
+                textBox2.Text = "";
