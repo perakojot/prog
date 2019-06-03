@@ -1,0 +1,167 @@
+    public partial class Form2 : Form
+    {
+        OleDbConnection konek = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|\SkolskaBiblioteka.accdb");
+        DataTable dt = new DataTable();
+        OleDbDataAdapter adap = new OleDbDataAdapter();
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            // TODO: This line of code loads data into the 'skolskaBibliotekaDataSet1.Knjiga' table. You can move, or remove it, as needed.
+            this.knjigaTableAdapter1.Fill(this.skolskaBibliotekaDataSet1.Knjiga);
+            // TODO: This line of code loads data into the 'skolskaBibliotekaDataSet.Knjiga' table. You can move, or remove it, as needed.
+           // this.knjigaTableAdapter.Fill(this.skolskaBibliotekaDataSet.Knjiga);
+            //dataGridView1.Rows.Clear();
+           // OleDbDataAdapter adapter = new OleDbDataAdapter("select * from Knjiga", konek);
+            //adapter.Fill(dt);
+           // dataGridView1.DataSource = dt;
+                }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+           try
+            {
+           if(konek.State==ConnectionState.Open)
+            { konek.Close(); }
+                konek.Open();
+                OleDbCommand unos = new OleDbCommand("insert into Knjiga(KnjigaID,UDK,ISBN,Naziv) values (@KnjigaID,@UDK,@ISBN,@Naziv)", konek);
+                unos.Parameters.AddWithValue("@KnjigaID", textBox1.Text);
+                unos.Parameters.AddWithValue("@UDK", textBox2.Text);
+                unos.Parameters.AddWithValue("@ISBN", textBox3.Text);
+                unos.Parameters.AddWithValue("@Naziv", textBox4.Text);
+                unos.ExecuteNonQuery();
+                MessageBox.Show("upisano");
+                textBox1.Text = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox4.Text = "";
+                konek.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Nedozvoljen unos, knjiga vec postoji ili niste popnunili neko polje");
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+           if(konek.State==ConnectionState.Open)
+            { konek.Close(); }
+                konek.Open();
+                OleDbCommand provera = new OleDbCommand("SELECT COUNT(*) FROM [Knjiga] WHERE ([KnjigaId] = @KnjigaID)", konek);
+                provera.Parameters.AddWithValue("@user", textBox1.Text);
+                int postoji = (int)provera.ExecuteScalar();
+
+                if (postoji > 0)
+                {
+                OleDbCommand obrisi = new OleDbCommand("DELETE FROM Knjiga WHERE KnjigaID=" + textBox1.Text, konek);
+                obrisi.ExecuteNonQuery();
+                MessageBox.Show("obrisano");
+                    textBox1.Text = "";
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                }
+                else
+                {
+                    MessageBox.Show("knjiga sa datim id-em ne postoji ");
+                    textBox1.Text = "";
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                }
+            konek.Close();
+            }
+          catch
+            {
+                MessageBox.Show("greska");
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+           // try
+           // {
+                if (konek.State == ConnectionState.Open)
+                { konek.Close(); }
+                konek.Open();
+                OleDbCommand provera = new OleDbCommand("SELECT COUNT(*) FROM [Knjiga] WHERE ([KnjigaId] = @KnjigaID)", konek);
+                provera.Parameters.AddWithValue("@user", textBox1.Text);
+                int postoji = (int)provera.ExecuteScalar();
+
+                if (postoji > 0)
+                {
+                    OleDbCommand unos = new OleDbCommand("update Knjiga set UDK=@UDK, ISBN=@ISBN, Naziv=@Naziv where KnjigaId="+textBox1.Text, konek);
+                    unos.Parameters.AddWithValue("@UDK", textBox2.Text);
+                    unos.Parameters.AddWithValue("@ISBN", textBox3.Text);
+                    unos.Parameters.AddWithValue("@Naziv", textBox4.Text);
+                    unos.ExecuteNonQuery();
+                    MessageBox.Show("izmenjeno");
+                    textBox1.Text = "";
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    konek.Close();
+                }
+                else
+                {
+                    MessageBox.Show("knjiga sa datim id-em ne postoji ");
+                    textBox1.Text = "";
+                    textBox2.Text = "";
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                }
+                konek.Close();
+            }//
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (konek.State == ConnectionState.Open)
+            { konek.Close(); }
+            konek.Open();
+            OleDbCommand provera = new OleDbCommand("SELECT COUNT(*) FROM [Knjiga] WHERE ([KnjigaId] = @KnjigaID)", konek);
+            provera.Parameters.AddWithValue("@KnjigaID", textBox1.Text);
+            int postoji = (int)provera.ExecuteScalar();
+
+            if (postoji > 0)
+            {
+                if (konek.State == ConnectionState.Open)
+                { konek.Close(); }
+                konek.Open();
+                    OleDbCommand prikaz = new OleDbCommand("Select * from Knjiga", konek);
+                    adap.SelectCommand = prikaz;
+                    adap.Fill(dt);
+                    int vrednost = Convert.ToInt32(textBox1.Text);
+                //MessageBox.Show(vrednost.ToString());
+
+                if (vrednost == 1)
+                {
+                    textBox2.Text = dt.Rows[0]["UDK"].ToString();
+                    textBox3.Text = dt.Rows[0]["ISBN"].ToString();
+                    textBox4.Text = dt.Rows[0]["Naziv"].ToString();
+                }
+                else
+                {
+                    textBox2.Text = dt.Rows[vrednost - 2]["UDK"].ToString();
+                    textBox3.Text = dt.Rows[vrednost - 2]["ISBN"].ToString();
+                    textBox4.Text = dt.Rows[vrednost - 2]["Naziv"].ToString();
+                }
+            }
+            else
+            { textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            }
+        }
+    }
