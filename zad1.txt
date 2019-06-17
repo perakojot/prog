@@ -1,0 +1,60 @@
+zad 1
+a
+
+zad 2 
+#include <iostream>
+using namespace std;
+
+int main() {
+	int a[3][3],pom=1;
+	printf_s("unos elemenata matrice \n");
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			printf_s("unesite %d %d element matrice \n", i, j);
+			scanf_s("%d", &a[i][j]);
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			pom = pom*a[i][j];
+		}
+	}
+	printf_s("rezultat je %d \n", pom);
+	system("pause");
+	return 0;
+}
+
+zad 3
+#include <iostream>
+using namespace std;
+
+int main() {
+	int a[3][3], d[3] = {0,0,0};
+	printf_s("unos elemenata matrice \n");
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			printf_s("unesite %d %d element matrice \n", i, j);
+			scanf_s("%d", &a[i][j]);
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			d[i] = d[i] + a[i][j];
+		}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		printf("zbir %d kolone je  %d \n",i, d[i]);
+	}
+	system("pause");
+	return 0;
+}
